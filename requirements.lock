@@ -1,0 +1,16 @@
+# Fully pinned, SHA-256-verified Windows dependencies. Python 3.12 / x64.
+av==19.0.1 --hash=sha256:906fc3db09288319a75ea23ffefb59961c7dbe0d1c074601507a89de7d8593d8
+bleak==0.22.3 --hash=sha256:1e62a9f5e0c184826e6c906e341d8aca53793e4596eeaf4e0b191e7aca5c461c
+numpy==2.5.2 --hash=sha256:28ac63476ec7651484215ee7fa15a1f78b57c14621f01e392afe17b9a1390ce4
+opencv-python==5.0.0.93 --hash=sha256:f90ba04b8f73bc5c3814037699739f0156f597338a98f05956c684e7c3ca10d2
+PyQt6==6.11.0 --hash=sha256:bd11b459c54dca068e988a42cf838303334f0d441b9d16d92ae6719fcb5ac6ba
+PyQt6-Qt6==6.11.2 --hash=sha256:4b424ed1babbef07133eb2a4174c56c848d518767bca8e759aca2c8c9c313636
+PyQt6_sip==13.13.0 --hash=sha256:c6b67d301ef64e13d313c728020616315c952473abb27029b2e5857b44a7b3e6
+winrt-runtime==2.3.0 --hash=sha256:0dc636aec2f4ee6c3849fa59dae10c128f4a908f0ce452e91af65d812ea66dcb
+winrt-Windows.Devices.Bluetooth==2.3.0 --hash=sha256:f7becf095bf9bc999629fcb6401a88b879c3531b3c55c820e63259c955ddc06c
+winrt-Windows.Devices.Bluetooth.Advertisement==2.3.0 --hash=sha256:1d3d258d4388a2b46f2e46f2fbdede1bf327eaa9c2dd4605f8a7fe454077c49e
+winrt-Windows.Devices.Bluetooth.GenericAttributeProfile==2.3.0 --hash=sha256:5fac2c7b301fa70e105785d7504176c76e4d824fc3823afed4d1ab6a7682272c
+winrt-Windows.Devices.Enumeration==2.3.0 --hash=sha256:83e385fbf85b9511699d33c659673611f42b98bd3a554a85b377a34cc3b68b2e
+winrt-Windows.Foundation==2.3.0 --hash=sha256:8de9b5e95a3fdabdb45b1952e05355dd5a678f80bf09a54d9f966dccc805b383
+winrt-Windows.Foundation.Collections==2.3.0 --hash=sha256:4d1b1cacc159f38d8e6b662f6e7a5c41879a36aa7434c1580d7f948c9037419e
+winrt-Windows.Storage.Streams==2.3.0 --hash=sha256:997bf1a2d52c5f104b172947e571f27d9916a4409b4da592ec3e7f907848dd1a

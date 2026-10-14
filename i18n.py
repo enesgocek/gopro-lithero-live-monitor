@@ -1,0 +1,278 @@
+"""English / Turkish messages. No cloud translation or network requests."""
+ENGLISH = {
+    "\nSD kayıt durumunu yukarıdan kontrol edin.": "\nCheck the SD recording status in the controls panel.",
+    " Fotoğraf 4:3 modundadır; video kadrajı ve pozlaması farklı olabilir.": " Photo mode is 4:3; video framing and exposure may differ.",
+    " · yalnızca bellekte · kapatınca silinir.": " · memory only · discarded on close.",
+    "12 MP test fotoğrafı çekiliyor…": "Taking a 12 MP test photo…",
+    "Akışta video bulunamadı.": "No video stream found.",
+    "Arayüzü aç, doğrula ve kapat": "Open, verify and close the interface",
+    "Açılışta otomatik bağlan": "Connect automatically on launch",
+    "BAĞLANTI": "CONNECTION",
+    "BAĞLANTI GÜNLÜĞÜ": "CONNECTION LOG",
+    "BAĞLANTI YOK": "DISCONNECTED",
+    "Bağlantı": "Connection",
+    "Bağlantı durumunu terminale yazdır": "Print connection status to the terminal",
+    "Bağlantı → Kameraya bağlan.  F11 veya çift tık: yalnızca görüntü.": "Connection → Connect camera. F11 or double-click: camera-only view.",
+    "Bağlantılar kapatılıyor… SD kaydı kamerada devam edebilir.": "Closing connections… SD recording may continue on the camera.",
+    "Beklenmeyen kamera hatası. Günlüğü inceleyin.": "Unexpected camera error. Check the log.",
+    "Beklenmeyen kamera yanıtı.": "Unexpected camera response.",
+    "Birden fazla yeni çekim bulundu; yanlış görsel seçilmedi.": "Multiple new captures found; no ambiguous image was selected.",
+    "Bluetooth bağlantısı kesildi; Wi-Fi önizlemesinin durumunu kontrol edin.": "Bluetooth disconnected; check the Wi-Fi preview status.",
+    "Bluetooth bağlantısı ve kamera Wi-Fi hazırlığı başarılı. Ağ: ": "Bluetooth connected and camera Wi-Fi ready. Network: ",
+    "Bluetooth {0} saniye açık tutuluyor.": "Keeping Bluetooth connected for {0} seconds.",
+    "Bu açılışta otomatik bağlantıyı atla": "Skip automatic connection for this launch",
+    "Bu kamerayı hatırla": "Remember this camera",
+    "Canlı görüntü · düşük gecikme": "Live preview · low latency",
+    "Canlı görüntü, kameranın gönderdiği doğal çözünürlükte alınır.": "Live preview uses the camera's native stream resolution.",
+    "Canlı önizlemeye dönülüyor…": "Returning to live preview…",
+    "Canlıya dön": "Back to live",
+    "Canlıya dönüşte görüntü alınamadı. Kamera Wi-Fi bağlantısını kontrol edin.": "Live preview could not resume. Check the camera Wi-Fi connection.",
+    "DEMO GÖRÜNTÜSÜ": "DEMO PREVIEW",
+    "DEMO — Sentetik görüntü; kamera bağlantısı ve SD kaydı yok.": "DEMO — Synthetic preview; no camera connection or SD recording.",
+    "DEMO • Gerçek kamera bağlı değil": "DEMO • No real camera connected",
+    "Doğrudan 12 MP fotoğraf. Geçicidir; kapatınca canlı önizlemeye dönülür.": "Direct 12 MP photo. Temporary; closing returns to live preview.",
+    "Durum sorgusu başarısız ({0}/3): {1}": "Status request failed ({0}/3): {1}",
+    "Ekranı doldur": "Fill screen",
+    "FOTOĞRAF": "PHOTO",
+    "Format hatası": "Format error",
+    "Fotoğraf 4:3 kadrajındadır. Video karesi seçili video ayarını kullanır. Kapatınca silinir ve canlıya dönülür.": "Photos use a 4:3 frame. Video frames use the selected video preset. Closing discards the image and returns to live.",
+    "Fotoğraf modu hazırlanıyor…": "Preparing photo mode…",
+    "Gelişmiş bağlantı": "Advanced connection",
+    "Gerçek kamera karesi alındı: {0}x{1} → {2}": "Camera frame received: {0}x{1} → {2}",
+    "Geçerli UDP önizleme adresi gerekiyor.": "A valid UDP preview address is required.",
+    "Geçerli bir kamera IP adresi girin.": "Enter a valid camera IP address.",
+    "Geçersiz kadraj kontrolü türü.": "Invalid framing check type.",
+    "Geçersiz kamera ağ adı.": "Invalid camera network name.",
+    "Geçici görsel açılamadı: {0}": "Could not open the temporary image: {0}",
+    "Geçici görüntü karesi geçersiz.": "Invalid temporary image frame.",
+    "Geçici kadraj hazır: {0} × {1}. Kapatınca silinir.": "Temporary framing check ready: {0} × {1}. Discarded on close.",
+    "Geçici kare · kapatınca silinir. Fare tekerleği: büyüt • Sürükle: gezin • 100%: gerçek piksel boyutu.": "Temporary frame · discarded on close. Mouse wheel: zoom • Drag: pan • 100%: actual pixels.",
+    "GoPro Bluetooth bağlantısı kuruluyor…": "Connecting to GoPro over Bluetooth…",
+    "GoPro Bluetooth cihazları aranıyor…": "Searching for GoPro Bluetooth devices…",
+    "GoPro LIT HERO • Bilgisayardan İzleme": "GoPro LitHero Live Monitor",
+    "GoPro bulunamadı. Kamerada eşleştirme ekranını açıp yeniden arayın.": "No GoPro found. Open camera pairing and search again.",
+    "GÖRÜNTÜ BEKLENİYOR": "WAITING FOR PREVIEW",
+    "GÖRÜNTÜ KESİLDİ": "PREVIEW INTERRUPTED",
+    "GÖRÜNTÜ YOK": "NO PREVIEW",
+    "Görsel aktarımı iptal edildi.": "Image transfer cancelled.",
+    "Görsel aktarımı zaman aşımı.": "Image transfer timed out.",
+    "Görsel indirme iptal edildi.": "Image download cancelled.",
+    "Görsel indirme zaman aşımı.": "Image download timed out.",
+    "Görüntü alıcısı açılamadı. UDP portunu kullanan diğer uygulamaları kapatın.": "Could not open the receiver. Close other apps using this UDP port.",
+    "Görüntü alınamıyor. Kamera bağlantısını kontrol edip önizlemeyi yeniden başlatın.": "No preview received. Check the connection and restart preview.",
+    "Görüntü dosyası yazılamadı.": "Could not write the image file.",
+    "Görüntü portunu başka uygulama kullanıyor. Diğer izleyiciyi kapatın.": "Another app is using the preview port. Close the other viewer.",
+    "Günlük": "Log",
+    "Hatırlanan GoPro": "Remembered GoPro",
+    "Hatırlanan Wi-Fi bağlantısıyla otomatik önizlemeyi aç": "Start preview using the remembered Wi-Fi connection",
+    "Hatırlanan kamera hazırlanıyor…": "Preparing the remembered camera…",
+    "Hazır": "Ready",
+    "Hazır kamera Wi-Fi bağlantısı aranıyor…": "Checking for an available camera Wi-Fi connection…",
+    "Hedef dosya zaten var; üzerine yazılmadı.": "Destination already exists; it was not overwritten.",
+    "Kadraj kontrolü iptal edildi.": "Framing check cancelled.",
+    "Kadraj kontrolünü kayıt başlamadan önce kullanın.": "Use the framing check before recording starts.",
+    "Kadraj testi: yaklaşık 2 saniyelik video çekiliyor…": "Framing check: recording a short test video…",
+    "Kaliteli kadraj hazırlanıyor…": "Preparing a high-resolution framing check…",
+    "Kaliteli kadraj için gerçek kameraya bağlanın.": "Connect a real camera to check framing quality.",
+    "Kaliteli kadraj · LIT HERO": "GoPro LitHero Live Monitor · High-resolution framing check",
+    "Kaliteli test fotoğrafı · F8": "High-resolution test photo · F8",
+    "Kamera API hatası: {0} ({1}).": "Camera API error: {0} ({1}).",
+    "Kamera Bluetooth kontrolü hazır değil.": "Camera Bluetooth control is not ready.",
+    "Kamera Wi-Fi ağı hazır. Windows’u bu ağa bağlayın.": "Camera Wi-Fi is ready. Connect Windows to this network.",
+    "Kamera Wi-Fi ağı zamanında hazır olmadı.": "Camera Wi-Fi did not become ready in time.",
+    "Kamera Wi-Fi ağını aç": "Enable camera Wi-Fi",
+    "Kamera ağı: ": "Camera network: ",
+    "Kamera ağı: —": "Camera network: —",
+    "Kamera ağına otomatik bağlanılıyor…": "Connecting to the camera network automatically…",
+    "Kamera ağını hazırla": "Prepare camera network",
+    "Kamera bağlantısı denetleniyor…": "Checking camera connection…",
+    "Kamera bağlantısı koptu. Wi-Fi ağını kontrol edip yeniden bağlanın.": "Camera disconnected. Check Wi-Fi and reconnect.",
+    "Kamera bağlı. Önizlemeyi başlatabilirsiniz.": "Camera connected. Preview is available.",
+    "Kamera bu modda önizlemeye izin vermiyor. Video modunu seçin.": "Preview is unavailable in this mode. Select Video on the camera.",
+    "Kamera dosyası aktarılamıyor.": "Could not transfer the camera file.",
+    "Kamera dosyası indirilemiyor.": "Could not download the camera file.",
+    "Kamera geçerli bir JSON yanıtı vermedi.": "Camera returned invalid JSON.",
+    "Kamera görüntüsü zamanında alınamadı.": "Camera preview timed out.",
+    "Kamera henüz bağlı değil": "Camera is not connected yet",
+    "Kamera kayıtta; test dosyası silinmedi.": "Camera is recording; the test file was not deleted.",
+    "Kamera medya dosyası yolu geçersiz.": "Invalid camera media path.",
+    "Kamera medya listesi doğrulanamadı.": "Could not validate the camera media list.",
+    "Kamera model bilgisi doğrulanamadı.": "Could not validate the camera model.",
+    "Kamera modu zamanında hazır olmadı.": "Camera mode did not become ready in time.",
+    "Kamera tercihi kaydedilemedi; mevcut bağlantı kullanılabilir.": "Could not save preferences; the current connection can still be used.",
+    "Kamera test dosyasını kapatamadı.": "Camera did not finish writing the test file.",
+    "Kamera veya SD kart hazır değil.": "Camera or SD card is not ready.",
+    "Kamera çekimi zamanında tamamlayamadı.": "Camera did not finish the capture in time.",
+    "Kamerada Quik / uygulama eşleştirme ekranını açın.": "Open Quik / app pairing on the camera.",
+    "Kamerada tek fotoğraf modu bulunamadı; Video karesi seçeneğini kullanın.": "No single-photo preset found; use Video frame instead.",
+    "Kameradan UDP görüntüsü gelmiyor.": "No UDP preview received from the camera.",
+    "Kameranız için sakin bir çalışma alanı.": "A clear workspace for your camera.",
+    "Kamerasız sentetik görüntü": "Synthetic preview without a camera",
+    "Kameraya erişilemiyor. GoPro Wi-Fi bağlantısını ve IP adresini kontrol edin.": "Cannot reach the camera. Check GoPro Wi-Fi and the IP address.",
+    "Kart değişti": "Card changed",
+    "Kaydı başlat": "Start recording",
+    "Kaynak: —": "Source: —",
+    "Kayıt için kameradan Video modunu seçin.": "Select Video on the camera to record.",
+    "Kayıt kameranın SD kartına yapılır.": "Recording is saved to the camera's SD card.",
+    "Kayıt komutu kabul edildi; kamera durumu doğrulanıyor…": "Recording command accepted; checking camera state…",
+    "Kayıt sürüyor. Kadraj kontrolü mevcut kaydı durdurmaz; çekimden önce kullanın.": "Recording is active. Check framing before filming; the existing recording was not stopped.",
+    "Kayıt sürüyor. Kadraj kontrolünü çekimden önce kullanın; mevcut kayıt durdurulmadı.": "Recording is active. Use the framing check before filming; the existing recording was not stopped.",
+    "Kayıtlı Windows ağı kullanılır; şifre yazmanız gerekmez.": "Your saved Windows network is used; no password typing needed.",
+    "Kayıtlı Windows kamera ağına bağlanılıyor…": "Connecting using the saved Windows camera network…",
+    "Kayıtlı kamera ağı: ": "Saved camera network: ",
+    "Kayıtlı kamera profili bulunamadı; Bluetooth ile ağ hazırlanmalı.": "No saved camera profile; prepare the network using Bluetooth.",
+    "Kenarları kırpar. Kapalıyken tüm kadraj görünür.": "Crops the edges. Turn off to see the entire frame.",
+    "Medya aktarılamadı: {0}.": "Media transfer failed: {0}.",
+    "Medya aktarımı tamamlanmadı.": "Media transfer was incomplete.",
+    "Medya indirme tamamlanmadı.": "Media download was incomplete.",
+    "Mevcut kayıt silinmedi.": "An existing recording was not deleted.",
+    "Mevcut video ayarı doğrulanamadı.": "Could not verify the current video preset.",
+    "Meşgul": "Busy",
+    "Open GoPro durum yanıtı doğrulanamadı. Firmware sürümünü kontrol edin.": "Could not validate Open GoPro status. Check the camera firmware.",
+    "Orijinal fotoğraf": "Original photo",
+    "Orijinal kamera görseli hazırlanıyor…": "Preparing the original camera image…",
+    "Orijinal çekim geçici olarak belleğe aktarılıyor…": "Transferring the original capture into memory…",
+    "Orijinal çözünürlüklü test karesi. Yalnızca bellekte tutulur; kapatınca silinir.": "Original-resolution test frame. Memory only; discarded on close.",
+    "Otomatik bağlantı kurulamadı. Kamerayı açık tutup Quik eşleştirme ekranını açın ve yeniden bağlanın.": "Automatic connection failed. Keep the camera on, open Quik pairing and reconnect.",
+    "Parola Bluetooth ile otomatik alınır": "Password is read automatically over Bluetooth",
+    "Parola otomatik alınır ve Windows Wi-Fi profiline kaydedilir.": "The password is read automatically and stored in your Windows Wi-Fi profile.",
+    "Pencereye dön  ↙": "Windowed  ↙",
+    "Pil: —   SD: —": "Battery: —   SD: —",
+    "SD KAYDI: DURUM BİLİNMİYOR": "SD RECORDING: UNKNOWN",
+    "SD Kaydını Başlat": "Start SD recording",
+    "SD Kaydını Durdur": "Stop SD recording",
+    "SD kart hazır değil. Kameranın SD kart durumunu kontrol edin.": "SD card is not ready. Check the camera's SD status.",
+    "SD karttaki test dosyası silinemedi.": "Could not delete the SD test file.",
+    "SD kaydı: durum bilinmiyor": "SD recording: unknown",
+    "SOL · BAĞLANTI     ÜST · GÖRÜNÜM     SAĞ · ÇEKİM": "LEFT · CONNECTION     TOP · VIEW     RIGHT · RECORDING",
+    "Smoke test sırasında pencere görüntüsü kaydet": "Save a window screenshot during the smoke test",
+    "Süren bağlantı işlemi bekleniyor… Kamera SD kaydı etkilenmez.": "Waiting for connection tasks to finish… Camera SD recording is unaffected.",
+    "Sığdır": "Fit",
+    "Tam ekran  ↗": "Fullscreen  ↗",
+    "Tek kamera belirlenemedi. Bluetooth / Wi-Fi kurulumu bölümünden kameranızı seçin.": "Could not identify one camera. Choose yours in Bluetooth / Wi-Fi setup.",
+    "Tek kamera seçilemedi. --scan ardından --device ADRES kullanın.": "Could not select one camera. Use --scan, then --device ADDRESS.",
+    "Tek tuşla bağlan": "Connect camera",
+    "Test dosyası beklenenden büyük.": "Test file exceeds the size limit.",
+    "Test fotoğrafı çözümlenemedi.": "Could not decode the test photo.",
+    "Test kaydı durumu belirsiz; kamerayı kontrol edin. {0}": "Test recording state is uncertain; check the camera. {0}",
+    "Test kaydı hâlâ sürüyor.": "Test recording is still active.",
+    "Test kaydının başlangıç/bitiş durumu doğrulanamadı.": "Could not verify test recording start/stop.",
+    "Test videosundan görüntü karesi alınamadı.": "Could not decode a frame from the test video.",
+    "Test çekimi kamerada kalmış olabilir: {0}": "The test capture may remain on the camera: {0}",
+    "UDP portu 1024–65535 olmalı.": "UDP port must be between 1024 and 65535.",
+    "Video ayarı geri yüklenemedi: {0}": "Could not restore the video preset: {0}",
+    "Video kadrajından kare": "Video frame",
+    "Video karesi için kamerada Video modunu seçin.": "Select Video on the camera to capture a video frame.",
+    "Videonun yüksek çözünürlüklü karesi hazırlanıyor…": "Preparing a high-resolution frame from the video…",
+    "VİDEO KARESİ": "VIDEO FRAME",
+    "Wi-Fi ağını işletim sisteminizin ağ menüsünden seçin.": "Select the Wi-Fi network in your operating system's network menu.",
+    "Wi-Fi bağlantısı iptal edildi.": "Wi-Fi connection cancelled.",
+    "Windows Wi-Fi bağlantı isteği gönderildi; kamera erişimi kontrol ediliyor.": "Windows Wi-Fi connection requested; checking camera access.",
+    "Windows kamera Wi-Fi ağına bağlanıyor…": "Connecting Windows to the camera Wi-Fi network…",
+    "Windows kamera ağına bağlantıyı başlatamadı.": "Windows could not start connecting to the camera network.",
+    "Windows’a Wi-Fi bağlantı isteği gönderildi. Birkaç saniye sonra Kameraya Bağlan’a basın.": "Wi-Fi connection requested. Connect to the camera after a few seconds.",
+    "Windows’u kamera ağına bağla": "Connect Windows to camera Wi-Fi",
+    "Yalnızca görüntüyle tam ekran aç": "Open in camera-only fullscreen",
+    "Yalnızca mevcut IP ile bağlan": "Connect using the current IP only",
+    "Yeni test dosyası kesin belirlenemedi; dosyalar silinmedi.": "Could not identify the new test file; no files were deleted.",
+    "Yeni çekim dosyası bulunamadı. SD kartı kontrol edin.": "No new capture found. Check the SD card.",
+    "Yerel kamera IP adresi gerekiyor (ör. 10.5.5.9).": "A private camera IP is required (for example, 10.5.5.9).",
+    "Yüksek çözünürlüklü görsel açılamadı.": "Could not open the high-resolution image.",
+    "{0}  ·  {1} × {2}": "{0}  ·  {1} × {2}",
+    "{0} · {1}\nFirmware: {2}": "{0} · {1}\nFirmware: {2}",
+    "{0} × {1}  ·  {2:.0f} fps\nDüşük gecikme": "{0} × {1}  ·  {2:.0f} fps\nLow latency",
+    "ÇEKİM": "RECORDING",
+    "ÖNİZLEME DURDU": "PREVIEW STOPPED",
+    "Önce kameraya bağlanın.": "Connect to the camera first.",
+    "Önizleme durdu. SD kaydı ayrı olarak sürüyor olabilir.": "Preview stopped. SD recording may still be active.",
+    "Önizleme durduruldu.": "Preview stopped.",
+    "Önizleme komutu kabul edildi; görüntü bekleniyor…": "Preview command accepted; waiting for frames…",
+    "Önizleme çözücüsü açılamadı.": "Could not open the preview decoder.",
+    "Önizlemeyi başlat": "Start preview",
+    "Önizlemeyi durdur": "Stop preview",
+    "×": "×",
+    "İlk bağlantı için GoPro otomatik aranıyor…": "Searching for a camera for first-time setup…",
+    "−": "−",
+    "● CANLI": "● LIVE",
+    "● SD KAYDI: {0:02}:{1:02}": "● SD RECORDING: {0:02}:{1:02}",
+    "Kontroller": "Controls",
+    "Aynala": "Mirror",
+    "Tam ekran": "Fullscreen",
+    "Kapat": "Close",
+    "Kamera IP": "Camera IP",
+    "UDP portu": "UDP port",
+    "Bluetooth ile ara": "Search Bluetooth",
+    "Bluetooth / Wi-Fi kurulumu": "Bluetooth / Wi-Fi setup",
+    "SD KAYDI: DURDU": "SD RECORDING: STOPPED",
+    "Dolu": "Full",
+    "Kart yok": "No card",
+    "Bilinmiyor": "Unknown",
+    "Orijinal video karesi": "Original video frame",
+    "Pil: %{0}   SD: {1}": "Battery: {0}%   SD: {1}",
+    "{0} GoPro bulundu.": "Found {0} GoPro camera(s).",
+    "Bluetooth komutu reddedildi: 0x{0:02x}, kod {1}": "Bluetooth command rejected: 0x{0:02x}, status {1}",
+    "Medya indirilemedi: {0}.": "Media download failed: {0}.",
+    "GoPro LIT HERO bilgisayardan izleme": "GoPro LitHero Live Monitor: a desktop framing monitor for GoPro LIT HERO",
+    "Dil": "Language"
+}
+
+ENGLISH.update({'Kamera HTTP yönlendirmeleri engellendi.': 'Camera HTTP redirects are blocked.', 'Kamera yanıtı boyut sınırını aşıyor.': 'Camera response exceeds the size limit.', 'Bu uygulama yalnızca GoPro LIT HERO modelini destekler.': 'This application supports GoPro LIT HERO only.', 'Geçersiz kamera Wi-Fi parolası.': 'Invalid camera Wi-Fi passphrase.', 'Windows WLAN API kullanılamıyor.': 'Windows WLAN API is unavailable.', 'Windows Wi-Fi bağdaştırıcıları bulunamadı.': 'Could not enumerate Windows Wi-Fi adapters.', 'Kullanılabilir Wi-Fi bağdaştırıcısı yok.': 'No available Wi-Fi adapter.', 'Windows kamera Wi-Fi profilini kaydedemedi.': 'Windows could not save the camera Wi-Fi profile.'})
+
+_language = 'en'
+
+def language():
+    return _language
+
+def set_language(value):
+    global _language
+    _language = value if value in ('en', 'tr') else 'en'
+
+def tr(source):
+    return ENGLISH.get(source, source) if _language == 'en' else source
+
+def translated_text(text, previous):
+    """Retranslate existing widgets without rebuilding them or reconnecting."""
+    import re
+    from string import Formatter
+    if previous == _language:
+        return text
+    pairs = ENGLISH.items() if previous == 'tr' else ((v, k) for k, v in ENGLISH.items())
+    for old, new in pairs:
+        if text == old:
+            return new if previous != _language else text
+        if '{' not in old or previous == _language:
+            continue
+        fields = list(Formatter().parse(old))
+        pattern = ''.join(re.escape(literal) + ('(.*?)' if name is not None else '') for literal, name, spec, conv in fields)
+        match = re.fullmatch(pattern, text, re.DOTALL)
+        if match:
+            rendered = []
+            # Values are already formatted; do not apply numeric specs twice.
+            captured = {name: value for (_, name, _, _), value in zip((f for f in fields if f[1] is not None), match.groups())}
+            for literal, name, spec, conv in Formatter().parse(new):
+                rendered.append(literal)
+                if name is not None:
+                    rendered.append(translated_text(captured[name], previous))
+            return ''.join(rendered)
+    # Handles explanatory sentences concatenated from independent messages.
+    for old, new in sorted((ENGLISH.items() if previous == 'tr' else ((v, k) for k, v in ENGLISH.items())), key=lambda item:len(item[0]), reverse=True):
+        if old and '{' not in old:
+            text = text.replace(old, new)
+    return text
+
+def retranslate_widgets(root, previous):
+    from PyQt6.QtCore import Qt
+    from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QCheckBox, QGroupBox, QLineEdit
+    for widget in [root, *root.findChildren(QWidget)]:
+        if isinstance(widget, (QLabel, QPushButton, QCheckBox)):
+            widget.setText(translated_text(widget.text(), previous))
+        if isinstance(widget, QLabel):
+            widget.setTextFormat(Qt.TextFormat.PlainText)
+        if isinstance(widget, QGroupBox):
+            widget.setTitle(translated_text(widget.title(), previous))
+        if isinstance(widget, QLineEdit):
+            widget.setPlaceholderText(translated_text(widget.placeholderText(), previous))
+        widget.setToolTip(translated_text(widget.toolTip(), previous))
+        widget.setWindowTitle(translated_text(widget.windowTitle(), previous))
+        if hasattr(widget, 'message'):
+            widget.setText(translated_text(widget.message, previous))

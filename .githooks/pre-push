@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+if [ -x .venv/Scripts/python.exe ]; then
+    .venv/Scripts/python.exe tools/release_check.py --staged --history
+elif [ -x .venv/bin/python ]; then
+    .venv/bin/python tools/release_check.py --staged --history
+else
+    python tools/release_check.py --staged --history
+fi
