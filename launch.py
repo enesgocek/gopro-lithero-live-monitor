@@ -15,7 +15,7 @@ def prepare_runtime():
     base=Path(sys.base_prefix).resolve()
     standard=[str(base/f'python{sys.version_info.major}{sys.version_info.minor}.zip'),str(base/'DLLs'),str(base/'Lib')]
     sys.path[:]=[*standard,str(root),str(packages)]
-    for key in ('PYTHONPATH','PYTHONHOME','PYTHONSTARTUP','QT_PLUGIN_PATH','QT_QPA_PLATFORM_PLUGIN_PATH','QT_QPA_FONTDIR','OPENSSL_CONF','OPENSSL_MODULES'):
+    for key in ('PYTHONPATH','PYTHONHOME','PYTHONSTARTUP','QT_PLUGIN_PATH','QT_QPA_PLATFORM_PLUGIN_PATH','QT_QPA_GENERIC_PLUGINS','QT_QPA_PLATFORMTHEME','QT_STYLE_OVERRIDE','QT_QPA_FONTDIR','OPENSSL_CONF','OPENSSL_MODULES'):
         os.environ.pop(key,None)
     os.environ['QT_QPA_PLATFORM']='windows'
     if os.name=='nt':

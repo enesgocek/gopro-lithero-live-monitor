@@ -24,6 +24,7 @@ class LauncherTests(unittest.TestCase):
             (private/'sitecustomize.py').write_text('from pathlib import Path\nPath('+repr(str(marker))+').write_text("loaded")\n',encoding='utf8')
             environment=dict(os.environ)
             environment.update(PYTHONPATH=str(private),PYTHONSTARTUP=str(private/'sitecustomize.py'),QT_PLUGIN_PATH=str(private),QT_QPA_PLATFORM_PLUGIN_PATH=str(private))
+            environment.update(QT_QPA_GENERIC_PLUGINS='untrusted-test-plugin',QT_QPA_PLATFORMTHEME='untrusted-test-theme',QT_STYLE_OVERRIDE='untrusted-test-style')
             executable=ROOT/'.venv'/'Scripts'/'python.exe'
             result=subprocess.run([str(executable),'-I','-S',str(ROOT/'launch.py'),'--demo','--smoke-test'],cwd=private,env=environment,capture_output=True,timeout=25)
             self.assertEqual(result.returncode,0,result.stderr.decode(errors='replace'))
