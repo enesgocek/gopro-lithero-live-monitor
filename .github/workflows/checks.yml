@@ -24,7 +24,7 @@ jobs:
       - name: Public source privacy check
         run: python tools/release_check.py
       - name: Regression tests
-        run: .venv/Scripts/python.exe -m unittest discover -s tests -v
+        run: .venv/Scripts/python.exe -m unittest discover -s tests -t . -v
       - name: Synthetic UI smoke test
         run: .venv/Scripts/python.exe -I -S launch.py --demo --smoke-test
       - name: Install audit tools in isolated environment
@@ -34,4 +34,4 @@ jobs:
       - name: Known dependency vulnerabilities
         run: .audit-venv/Scripts/python.exe -m pip_audit -r requirements.lock --require-hashes
       - name: Static security analysis
-        run: .audit-venv/Scripts/python.exe -m bandit -q -r camera_api.py main.py launch.py monitor_ui.py ble_setup.py connection_store.py diagnose.py gopro_controller.py i18n.py privacy.py quality_capture.py quality_review.py quick_connection.py video_stream.py wifi_connect.py tools/release_check.py
+        run: .audit-venv/Scripts/python.exe -m bandit -q -r src/gopro_monitor launch.py tools/release_check.py tools/diagnose.py

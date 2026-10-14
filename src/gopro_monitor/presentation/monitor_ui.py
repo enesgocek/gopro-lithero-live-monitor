@@ -1,6 +1,5 @@
 """Image-first desktop UI with edge-revealed controls."""
-from i18n import tr
-import cv2
+from gopro_monitor.shared.i18n import tr
 import numpy as np
 from PyQt6.QtCore import Qt, QRectF, pyqtSignal
 from PyQt6.QtGui import QImage, QPainter, QColor, QFont
@@ -198,7 +197,8 @@ def build_ui(window):
     window.port.setValue(8554)
     form.addRow(tr('Kamera IP'),window.address)
     form.addRow(tr('UDP portu'),window.port)
-    form.addRow(button(tr('Yalnızca mevcut IP ile bağlan'),window.connect_camera))
+    window.direct_connect_button=button(tr('Yalnızca mevcut IP ile bağlan'),window.connect_camera)
+    form.addRow(window.direct_connect_button)
     advanced_toggle.toggled.connect(advanced.setVisible)
     left.addWidget(advanced_toggle)
     left.addWidget(advanced)

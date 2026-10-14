@@ -1,5 +1,5 @@
 """Direct UDP MPEG-TS decoding without OpenCV's capture queue."""
-from i18n import tr
+from gopro_monitor.shared.i18n import tr
 import io
 import socket
 import threading

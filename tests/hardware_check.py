@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 import sys
 import time
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'src'))
 from PyQt6.QtCore import QTimer,QPoint
 from PyQt6.QtWidgets import QApplication
-from main import MainWindow
-from quality_capture import QualityCapture
+from gopro_monitor.presentation.main_window import MainWindow
+from gopro_monitor.application.quality_capture import QualityCapture
+from gopro_monitor.infrastructure.image_decoder import OriginalMediaDecoder
 
 for stream in (sys.stdout,sys.stderr):
     if hasattr(stream,'reconfigure'):
@@ -17,11 +18,12 @@ parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--record-test',action='store_true')
 parser.add_argument('--leave-open',action='store_true')
 parser.add_argument('--fullscreen-check',action='store_true')
+parser.add_argument('--screenshots',action='store_true',help='Explicitly save private camera screenshots under artifacts/')
 args=parser.parse_args()
 app=QApplication([])
 window=MainWindow()
 window.show()
-Path('artifacts').mkdir(exist_ok=True)
+if args.screenshots:Path('artifacts').mkdir(exist_ok=True)
 started=time.monotonic()
 phase='connect'
 record_started=0
@@ -30,11 +32,14 @@ recording_frame=False
 exit_code=1
 media_before=None
 
+def screenshot(name):
+    if args.screenshots:window.grab().save(str(Path('artifacts')/name))
+
 def finish(ok, message):
     global exit_code,phase
     if media_before is not None:
         try:
-            capture=QualityCapture(window.gopro.api)
+            capture=QualityCapture(window.gopro.api,decoder=OriginalMediaDecoder())
             files=capture.ready_media(cancellable=False)
             new=[key for key in files if key not in media_before and key[1].upper().endswith('.MP4')]
             if not window.gopro.api.state()['10'] and len(new)==1:
@@ -63,13 +68,13 @@ def check_fullscreen():
     assert window._focus_mode and not window.top_bar.isVisible()
     assert not window.left_panel.isVisible() and not window.right_panel.isVisible()
     assert window.video_label.size()==window.surface.size()
-    window.grab().save('artifacts/minimal-fullscreen.png')
+    screenshot('minimal-fullscreen.png')
     for name,point,panel in [('left',QPoint(1,250),window.left_panel),
                              ('top',QPoint(window.surface.width()//2,1),window.top_bar),
                              ('right',QPoint(window.surface.width()-1,250),window.right_panel)]:
         window.update_edge_panels(point)
         assert panel.isVisible()
-        window.grab().save(f'artifacts/minimal-{name}-panel.png')
+        screenshot(f'minimal-{name}-panel.png')
     window.hide_edge_panels()
     print('Gerçek görüntü: saf tam ekran ve sol/üst/sağ paneller doğrulandı.',flush=True)
 
@@ -86,7 +91,7 @@ def tick():
         window.quick_connect()
     elif phase=='preview' and window._preview_state=='active' and window._frame is not None:
         if not args.record_test:
-            window.grab().save('artifacts/live-app.png')
+            screenshot('live-app.png')
             check_fullscreen()
             finish(True,'Gerçek görüntü masaüstü arayüzünde gösterildi.')
         elif window._recording:
@@ -103,12 +108,12 @@ def tick():
         if now-record_started>3 and now-window._last_frame_time<1 and window._preview_state=='active':
             recording_frame=True
         if now-record_started>6:
-            window.grab().save('artifacts/recording-app.png')
+            screenshot('recording-app.png')
             window.toggle_recording()
             phase='record-stop'
     elif phase=='record-stop' and window._recording is False:
         owned_recording=False
-        window.grab().save('artifacts/live-app.png')
+        screenshot('live-app.png')
         check_fullscreen()
         finish(recording_frame,'SD kaydı başlatıldı/durduruldu; kayıt sırasında canlı görüntü doğrulandı.' if recording_frame else 'SD kayıt kontrolü çalıştı, kayıt sırasında görüntü doğrulanamadı.')
 

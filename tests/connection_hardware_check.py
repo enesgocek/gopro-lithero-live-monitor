@@ -1,10 +1,10 @@
 """Verify one-click connection, remembered identity and native live frames."""
 from pathlib import Path
 import sys,time,json
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication
-from main import MainWindow
+from gopro_monitor.presentation.main_window import MainWindow
 for stream in (sys.stdout,sys.stderr):
     if hasattr(stream,'reconfigure'):stream.reconfigure(encoding='utf8',errors='replace')
 app=QApplication([])

@@ -9,12 +9,12 @@ import numpy as np
 from PyQt6.QtCore import QCoreApplication,QEvent,Qt
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication,QLabel
-from camera_api import CameraAPI,CameraError,NoCameraRedirects,validate_address
-from connection_store import ConnectionStore
-from i18n import language,set_language,tr
-from monitor_ui import VideoCanvas
-from privacy import redact
-from wifi_connect import ensure_wifi
+from gopro_monitor.infrastructure.camera_api import CameraAPI,CameraError,NoCameraRedirects,validate_address
+from gopro_monitor.infrastructure.connection_store import ConnectionStore
+from gopro_monitor.shared.i18n import language,set_language,tr
+from gopro_monitor.presentation.monitor_ui import VideoCanvas
+from gopro_monitor.shared.privacy import redact
+from gopro_monitor.infrastructure.wifi_connect import ensure_wifi
 
 APP=QApplication.instance() or QApplication([])
 
@@ -41,7 +41,7 @@ class SecurityTests(unittest.TestCase):
         with self.assertRaises(CameraError):api.info()
 
     def test_profile_setup_uses_memory_api_without_plaintext_file(self):
-        with patch('wifi_connect.current_ssid',return_value=''),patch('wifi_connect.netsh',side_effect=[subprocess.CompletedProcess([],1),subprocess.CompletedProcess([],0)]),patch('wifi_connect.install_profile') as native,patch('builtins.open') as disk:
+        with patch('gopro_monitor.infrastructure.wifi_connect.current_ssid',return_value=''),patch('gopro_monitor.infrastructure.wifi_connect.netsh',side_effect=[subprocess.CompletedProcess([],1),subprocess.CompletedProcess([],0)]),patch('gopro_monitor.infrastructure.wifi_connect.install_profile') as native,patch('builtins.open') as disk:
             ensure_wifi('GoPro TestCamera','synthetic-passphrase')
             native.assert_called_once_with('GoPro TestCamera','synthetic-passphrase')
             disk.assert_not_called()
@@ -62,7 +62,7 @@ class LanguageTests(unittest.TestCase):
         self.assertEqual(tr('Tek tuşla bağlan'),'Connect camera')
 
     def test_language_switch_preserves_camera_and_current_frame(self):
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         with tempfile.TemporaryDirectory() as folder:
             window=MainWindow(demo=False,settings_path=Path(folder)/'settings.json')
             try:

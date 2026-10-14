@@ -2,13 +2,14 @@
 import json
 import re
 from pathlib import Path
-from camera_api import validate_address,CameraError
+from gopro_monitor.domain.connection import validate_address
+from gopro_monitor.domain.errors import CameraError
 
 DEFAULTS={'remember':True,'auto_connect':True,'device':'','device_name':'','ssid':'','address':'10.5.5.9','port':8554,'language':'en'}
 
 class ConnectionStore:
     def __init__(self,path=None):
-        self.path=Path(path) if path else Path(__file__).resolve().parent/'.connection.json'
+        self.path=Path(path) if path else Path(__file__).resolve().parents[3]/'.connection.json'
 
     @staticmethod
     def validated(data):

@@ -1,6 +1,7 @@
 """Validated Open GoPro HTTP client; local camera requests bypass proxies."""
-from i18n import tr
-import ipaddress
+from gopro_monitor.shared.i18n import tr
+from gopro_monitor.domain.errors import CameraError
+from gopro_monitor.domain.connection import validate_address,preview_url
 import json
 import urllib.error
 import urllib.request
@@ -10,30 +11,9 @@ import io
 from pathlib import Path
 from urllib.parse import urlencode, urlsplit, quote
 
-class CameraError(Exception):
-    def __init__(self,message,http_status=None):
-        super().__init__(message)
-        self.http_status=http_status
-
 class NoCameraRedirects(urllib.request.HTTPRedirectHandler):
     def redirect_request(self,request,fp,code,msg,headers,newurl):
         raise CameraError(tr('Kamera HTTP yönlendirmeleri engellendi.'))
-
-def validate_address(address):
-    address = address.strip().rstrip('/')
-    if '://' not in address:
-        address = 'http://' + address
-    parts = urlsplit(address)
-    try:
-        ip = ipaddress.ip_address(parts.hostname or '')
-        port = parts.port
-    except ValueError as exc:
-        raise CameraError(tr('Geçerli bir kamera IP adresi girin.')) from exc
-    permitted=any(ip in ipaddress.ip_network(network) for network in ('10.0.0.0/8','172.16.0.0/12','192.168.0.0/16','fc00::/7'))
-    if parts.scheme != 'http' or not permitted or parts.username or parts.password or parts.path or parts.query or parts.fragment:
-        raise CameraError(tr('Yerel kamera IP adresi gerekiyor (ör. 10.5.5.9).'))
-    host = f'[{ip}]' if ip.version == 6 else str(ip)
-    return f'http://{host}' + (f':{port}' if port else '')
 
 class CameraAPI:
     def __init__(self, address='10.5.5.9', timeout=3):
@@ -52,7 +32,7 @@ class CameraAPI:
                 raw = response.read(1024 * 1024+1)
                 if len(raw)>1024*1024:raise CameraError(tr('Kamera yanıtı boyut sınırını aşıyor.'))
         except urllib.error.HTTPError as exc:
-            raise CameraError(f'Kamera komutu reddetti: HTTP {exc.code} ({endpoint}).',http_status=exc.code) from exc
+            raise CameraError(tr('Kamera komutu reddetti: HTTP {0} ({1}).').format(exc.code,endpoint),http_status=exc.code) from exc
         except (urllib.error.URLError, TimeoutError, OSError) as exc:
             raise CameraError(tr('Kameraya erişilemiyor. GoPro Wi-Fi bağlantısını ve IP adresini kontrol edin.')) from exc
         try:
@@ -70,6 +50,11 @@ class CameraAPI:
         status = result.get('status')
         if not isinstance(status, dict) or '10' not in status:
             raise CameraError(tr('Open GoPro durum yanıtı doğrulanamadı. Firmware sürümünü kontrol edin.'))
+        if type(status['10']) not in (int,bool) or status['10'] not in (0,1):
+            raise CameraError(tr('Kamera durum verisi geçersiz.'))
+        for key in ('13','33','60','96','97'):
+            if key in status and (type(status[key]) is not int or not 0<=status[key]<=4294967295):
+                raise CameraError(tr('Kamera durum verisi geçersiz.'))
         return status
 
     def info(self):
@@ -92,8 +77,11 @@ class CameraAPI:
             raise CameraError(tr('Kamera medya listesi doğrulanamadı.'))
         files={}
         for directory in result['media']:
+            if not isinstance(directory,dict) or not isinstance(directory.get('fs'),list):
+                raise CameraError(tr('Kamera medya listesi doğrulanamadı.'))
             folder=directory.get('d','')
             for entry in directory.get('fs',[]):
+                if not isinstance(entry,dict):raise CameraError(tr('Kamera medya listesi doğrulanamadı.'))
                 name=entry.get('n','')
                 if isinstance(folder,str) and isinstance(name,str):
                     files[(folder,name)]=entry
@@ -188,6 +176,3 @@ class CameraAPI:
             raise CameraError(tr('Medya indirilemedi: {0}.').format(type(exc).__name__)) from exc
         finally:
             if created:temporary.unlink(missing_ok=True)
-
-def preview_url(port):
-    return f'udp://0.0.0.0:{port}'

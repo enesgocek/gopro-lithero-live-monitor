@@ -47,7 +47,9 @@ def main():
     parser.add_argument('--staged',action='store_true')
     parser.add_argument('--history',action='store_true')
     args=parser.parse_args()
-    allowed=json.loads(MANIFEST.read_text(encoding='utf8'))['files']
+    manifest=json.loads(MANIFEST.read_text(encoding='utf8'))
+    allowed=manifest['files']
+    historical=set(allowed+manifest.get('historical_files',[]))
     known=[]
     try:
         local=json.loads((ROOT/'.connection.json').read_text(encoding='utf8'))
@@ -73,7 +75,7 @@ def main():
         for entry in git('rev-list','--objects','--all').decode('utf8').splitlines():
             oid,separator,name=entry.partition(' ')
             if not separator or git('cat-file','-t',oid).strip()!=b'blob':continue
-            if name not in allowed or not valid_path(name):problems.append(f'{name}: unapproved historical file');continue
+            if name not in historical or not valid_path(name):problems.append(f'{name}: unapproved historical file');continue
             text=git('cat-file','-p',oid).decode('utf8')
             problems.extend(f'{name}: historical {reason}' for reason in inspect_text(text,name,known))
     if problems:

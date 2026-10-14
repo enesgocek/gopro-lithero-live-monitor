@@ -1,16 +1,14 @@
 """Inspect native photos or video frames in RAM, clean only owned test media."""
-from i18n import tr
-import io
+from gopro_monitor.shared.i18n import tr
 from pathlib import Path
 import time
-import av
-import cv2
-import numpy as np
-from camera_api import CameraError
+from gopro_monitor.domain.errors import CameraError
+from gopro_monitor.domain.ports import CameraPort,FrameDecoder
 
 class QualityCapture:
-    def __init__(self,api,status=lambda text:None,cancelled=lambda:False):
+    def __init__(self,api:CameraPort,status=lambda text:None,cancelled=lambda:False,*,decoder:FrameDecoder):
         self.api=api
+        self.decoder=decoder
         self.status=status
         self.cancelled=cancelled
 
@@ -134,23 +132,11 @@ class QualityCapture:
             self.status(tr('Orijinal çekim geçici olarak belleğe aktarılıyor…'))
             source=self.api.fetch_media_bytes(folder,name,self.cancelled)
             source_bytes=len(source)
-            if kind=='photo':
-                image=cv2.imdecode(np.frombuffer(source,np.uint8),cv2.IMREAD_COLOR)
-                del source
-                if image is None:raise CameraError(tr('Test fotoğrafı çözümlenemedi.'))
+            if kind=='photo':image=self.decoder.photo(source)
             else:
                 self.status(tr('Videonun yüksek çözünürlüklü karesi hazırlanıyor…'))
-                with io.BytesIO(source) as buffer,av.open(buffer) as container:
-                    del source
-                    first_time=None
-                    frame=None
-                    for decoded in container.decode(video=0):
-                        if self.cancelled():raise CameraError(tr('Kadraj kontrolü iptal edildi.'))
-                        frame=decoded
-                        if first_time is None:first_time=decoded.time or 0
-                        if (decoded.time or 0)-first_time>=.8:break
-                    if frame is None:raise CameraError(tr('Test videosundan görüntü karesi alınamadı.'))
-                    image=frame.to_ndarray(format='bgr24')
+                image=self.decoder.video(source,self.cancelled)
+            del source
             height,width=image.shape[:2]
             result={'kind':kind,'frame':image,
                     'width':width,'height':height,'camera_folder':folder,'camera_file':name,

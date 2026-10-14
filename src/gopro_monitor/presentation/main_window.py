@@ -1,6 +1,7 @@
-"""Turkish desktop monitor for GoPro LIT HERO."""
-from i18n import tr, language, set_language, retranslate_widgets
-from privacy import redact
+"""Desktop monitor for GoPro LIT HERO."""
+from gopro_monitor.presentation.localization import retranslate_widgets
+from gopro_monitor.shared.i18n import tr, language, set_language
+from gopro_monitor.shared.privacy import redact
 import argparse
 from collections import deque
 from datetime import datetime
@@ -12,19 +13,17 @@ import numpy as np
 from PyQt6.QtCore import Qt, QTimer, QEvent
 from PyQt6.QtGui import QShortcut, QKeySequence
 from urllib.parse import urlsplit
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QLabel, QPushButton,
-    QVBoxLayout, QHBoxLayout, QFormLayout, QLineEdit, QSpinBox, QComboBox,
-    QCheckBox, QPlainTextEdit, QGroupBox, QSplitter, QScrollArea)
-from camera_api import validate_address, CameraError
-from gopro_controller import GoProController
-from video_stream import VideoStreamThread
-from ble_setup import BluetoothWorker
-from wifi_connect import WifiConnectWorker
-from quick_connection import QuickConnectionWorker
-from connection_store import ConnectionStore
-from quality_review import QualityReview
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
+from gopro_monitor.infrastructure.camera_api import validate_address, CameraError
+from gopro_monitor.infrastructure.qt_controller import GoProController
+from gopro_monitor.infrastructure.video_stream import VideoStreamThread
+from gopro_monitor.infrastructure.ble_setup import BluetoothWorker
+from gopro_monitor.infrastructure.wifi_connect import WifiConnectWorker
+from gopro_monitor.infrastructure.quick_connection import QuickConnectionWorker
+from gopro_monitor.infrastructure.connection_store import ConnectionStore
+from gopro_monitor.presentation.quality_review import QualityReview
 
-from monitor_ui import STYLE, build_ui
+from gopro_monitor.presentation.monitor_ui import STYLE, build_ui
 
 class MainWindow(QMainWindow):
     def __init__(self, demo=False,settings_path=None,ui_language=None):
@@ -43,6 +42,9 @@ class MainWindow(QMainWindow):
         self._auto_start_on_connect=False
         self._saving_connection=False
         self._transport='Wi-Fi'
+        self._camera_info=None
+        self._ssid_saved=True
+        self._pinned_panels=set()
         self._connected = False
         self._recording = None
         self._pending = set()
@@ -126,7 +128,13 @@ class MainWindow(QMainWindow):
     def change_language(self):
         previous=language()
         set_language(self.language_combo.currentData())
-        retranslate_widgets(self,previous)
+        retranslate_widgets(self,previous,skip_text=(self.ssid_label,self.camera_label))
+        if self._ssid:
+            prefix=tr('Kayıtlı kamera ağı: ') if self._ssid_saved else tr('Kamera ağı: ')
+            self.ssid_label.setText(prefix+self._ssid)
+        else:self.ssid_label.setText(tr('Kamera ağı: —'))
+        if self._camera_info:self.on_info(self._camera_info)
+        else:self.camera_label.setText(tr('DEMO • Gerçek kamera bağlı değil') if self.demo else tr('Kamera henüz bağlı değil'))
         self.update_controls()
         self.save_connection_profile()
 
@@ -147,17 +155,40 @@ class MainWindow(QMainWindow):
 
     def toggle_connection_panel(self):
         self.left_panel.setVisible(not self.left_panel.isVisible())
+        self.pin_clicked_panel(self.left_panel)
         self.left_panel.raise_()
 
     def toggle_control_panel(self):
         self.right_panel.setVisible(not self.right_panel.isVisible())
+        self.pin_clicked_panel(self.right_panel)
         self.right_panel.raise_()
 
     def toggle_log_panel(self):
         self.log_panel.setVisible(not self.log_panel.isVisible())
         self.log_panel.raise_()
 
+    def pin_clicked_panel(self,panel):
+        if self._focus_mode and panel.isVisible():self._pinned_panels.add(panel)
+        else:self._pinned_panels.discard(panel)
+
+    def panel_for_widget(self,widget):
+        while widget is not None:
+            if widget in (self.left_panel,self.top_bar,self.right_panel):return widget
+            widget=widget.parentWidget()
+        return None
+
+    def interaction_panel(self):
+        popup=QApplication.activePopupWidget()
+        if popup:return self.panel_for_widget(popup)
+        if QApplication.mouseButtons()!=Qt.MouseButton.NoButton:
+            return self.panel_for_widget(QWidget.mouseGrabber() or QApplication.focusWidget())
+        return None
+
     def eventFilter(self, source, event):
+        if self._focus_mode and not self._closing and event.type()==QEvent.Type.MouseButtonPress and source in (self.video_label,self.surface):
+            self._pinned_panels.clear()
+            self._edge_hide_timer.stop()
+            for panel in (self.left_panel,self.top_bar,self.right_panel):panel.hide()
         if self._focus_mode and not self._closing and source is self.surface and event.type()==QEvent.Type.Leave:
             self._edge_hide_timer.start(250)
         if self._focus_mode and not self._closing and event.type() == QEvent.Type.MouseMove:
@@ -171,6 +202,11 @@ class MainWindow(QMainWindow):
 
     def update_edge_panels(self, point):
         self._last_pointer = point
+        interaction=self.interaction_panel()
+        if interaction:
+            self._edge_hide_timer.stop()
+            interaction.show()
+            return
         w,h=self.surface.width(),self.surface.height()
         desired=[]
         for panel,at_edge in ((self.left_panel,point.x()<=20),
@@ -182,7 +218,7 @@ class MainWindow(QMainWindow):
         if desired:
             self._edge_hide_timer.stop()
             for panel in (self.left_panel,self.top_bar,self.right_panel):
-                panel.setVisible(panel in desired)
+                panel.setVisible(panel in desired or panel in self._pinned_panels)
                 if panel in desired:panel.raise_()
         else:
             # Grace period lets the pointer cross the gap into a panel.
@@ -190,10 +226,15 @@ class MainWindow(QMainWindow):
 
     def hide_edge_panels(self):
         if self._focus_mode:
-            for panel in (self.left_panel,self.top_bar,self.right_panel):panel.hide()
+            protected=self._pinned_panels.copy()
+            interaction=self.interaction_panel()
+            if interaction:protected.add(interaction)
+            for panel in (self.left_panel,self.top_bar,self.right_panel):
+                if panel not in protected:panel.hide()
 
     def set_focus_mode(self, enabled):
         self._focus_mode=enabled
+        self._pinned_panels.clear()
         self._edge_hide_timer.stop()
         self.top_bar.setVisible(not enabled)
         self.left_panel.hide()
@@ -229,6 +270,7 @@ class MainWindow(QMainWindow):
         self.prepare_button.setEnabled(not self.demo and not ble_running and not self._connected and self.device_combo.count() > 0)
         self.wifi_button.setEnabled(not self.demo and bool(self._ssid) and not wifi_running and not self._connected)
         self.connect_button.setEnabled(not self.demo and not self._connected and not self._quick_connecting and 'connect' not in self._pending and not wifi_running)
+        self.direct_connect_button.setEnabled(not self.demo and not self._connected and not self._pending and not self._quick_connecting and not wifi_running)
         self.address.setEnabled(not self._connected and not self._pending)
         self.port.setEnabled(not self._connected and not self._pending)
         running = bool(self.stream_thread and self.stream_thread.isRunning())
@@ -268,7 +310,7 @@ class MainWindow(QMainWindow):
             device=self.device_combo.currentData()
             if device:
                 profile['device']=device
-                profile['device_name']=self.device_combo.currentText()
+                profile['device_name']=self.device_combo.currentData(Qt.ItemDataRole.UserRole+1) or self.device_combo.currentText()
             self.connection_profile=self.connection_store.save(profile)
         except OSError:
             self.show_status(tr('Kamera tercihi kaydedilemedi; mevcut bağlantı kullanılabilir.'))
@@ -277,7 +319,11 @@ class MainWindow(QMainWindow):
     def quick_connect(self,force_ble=False):
         if self.demo or self._closing or self._pending or self._quick_connecting:return
         if self._connected and not force_ble:return
-        if self.connection_worker and self.connection_worker.isRunning():return
+        if self.connection_worker and self.connection_worker.isRunning():
+            if self.connection_worker.maintaining_ble and not self._connected:
+                self._auto_start_on_connect=True
+                self.connect_camera()
+            return
         self.save_connection_profile()
         self._quick_connecting=True
         self._auto_start_on_connect=False
@@ -296,6 +342,7 @@ class MainWindow(QMainWindow):
         if self._closing:return
         if profile.get('ssid'):
             self._ssid=profile['ssid']
+            self._ssid_saved=True
             self.ssid_label.setText(tr('Kayıtlı kamera ağı: ')+self._ssid)
         if profile.get('device'):
             index=self.device_combo.findData(profile['device'])
@@ -415,6 +462,7 @@ class MainWindow(QMainWindow):
     def on_devices(self, devices):
         for name, address in devices:
             self.device_combo.addItem(f'{name} ({address})', address)
+            self.device_combo.setItemData(self.device_combo.count()-1,name,Qt.ItemDataRole.UserRole+1)
         self.show_status(tr('{0} GoPro bulundu.').format(len(devices)) if devices else tr('GoPro bulunamadı. Kamerada eşleştirme ekranını açıp yeniden arayın.'))
         self.update_controls()
 
@@ -430,6 +478,7 @@ class MainWindow(QMainWindow):
 
     def on_wifi_ready(self, ssid, password):
         self._ssid, self._password = ssid, password
+        self._ssid_saved=False
         self.ssid_label.setText(tr('Kamera ağı: ') + ssid)
         self.save_connection_profile()
         self.update_controls()
@@ -446,7 +495,7 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def connect_camera(self):
-        if self._closing or 'connect' in self._pending:return
+        if self.demo or self._closing or self._pending:return
         try:
             address = validate_address(self.address.text())
         except CameraError as exc:
@@ -473,6 +522,7 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def on_info(self, info):
+        self._camera_info={'model_name':info['model_name'],'firmware_version':info.get('firmware_version','—')}
         self.camera_label.setText(tr('{0} · {1}\nFirmware: {2}').format(info["model_name"], self._transport, info.get("firmware_version", "—")))
 
     def on_camera_state(self, state):
@@ -485,6 +535,7 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def start_stream(self):
+        if self.demo or self._closing or not self._connected or self._pending:return
         self._pending.add('start')
         self.gopro.start_stream()
         self.update_controls()
@@ -511,6 +562,7 @@ class MainWindow(QMainWindow):
         self.source_label.setText(tr('{0} × {1}  ·  {2:.0f} fps\nDüşük gecikme').format(metrics["width"], metrics["height"], metrics["fps"]))
 
     def stop_stream(self):
+        if self.demo or self._closing or not self._connected or self._pending-{'start'}:return
         self._return_to_live=False
         self._live_return_timer.stop()
         self.stop_decoder()
@@ -540,7 +592,7 @@ class MainWindow(QMainWindow):
         self.update_controls()
 
     def toggle_recording(self):
-        if self._recording is None:
+        if self.demo or self._closing or not self._connected or self._recording is None or self._pending:
             return
         self._pending.add('record')
         self.gopro.set_recording(not self._recording)
@@ -608,6 +660,12 @@ class MainWindow(QMainWindow):
         self.layout_overlays()
 
     def escape(self):
+        popup=QApplication.activePopupWidget()
+        if popup and self.panel_for_widget(popup):
+            for combo in (self.language_combo,self.device_combo):
+                if combo.view().window() is popup:combo.hidePopup()
+            return
+        self._pinned_panels.clear()
         if self._focus_mode:
             self.toggle_fullscreen()
         else:

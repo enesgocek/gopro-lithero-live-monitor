@@ -217,6 +217,8 @@ ENGLISH = {
 }
 
 ENGLISH.update({'Kamera HTTP yönlendirmeleri engellendi.': 'Camera HTTP redirects are blocked.', 'Kamera yanıtı boyut sınırını aşıyor.': 'Camera response exceeds the size limit.', 'Bu uygulama yalnızca GoPro LIT HERO modelini destekler.': 'This application supports GoPro LIT HERO only.', 'Geçersiz kamera Wi-Fi parolası.': 'Invalid camera Wi-Fi passphrase.', 'Windows WLAN API kullanılamıyor.': 'Windows WLAN API is unavailable.', 'Windows Wi-Fi bağdaştırıcıları bulunamadı.': 'Could not enumerate Windows Wi-Fi adapters.', 'Kullanılabilir Wi-Fi bağdaştırıcısı yok.': 'No available Wi-Fi adapter.', 'Windows kamera Wi-Fi profilini kaydedemedi.': 'Windows could not save the camera Wi-Fi profile.'})
+ENGLISH['Kamera durum verisi geçersiz.']='Camera status data is invalid.'
+ENGLISH['Kamera komutu reddetti: HTTP {0} ({1}).']='Camera rejected the command: HTTP {0} ({1}).'
 
 _language = 'en'
 
@@ -259,20 +261,3 @@ def translated_text(text, previous):
         if old and '{' not in old:
             text = text.replace(old, new)
     return text
-
-def retranslate_widgets(root, previous):
-    from PyQt6.QtCore import Qt
-    from PyQt6.QtWidgets import QWidget, QLabel, QPushButton, QCheckBox, QGroupBox, QLineEdit
-    for widget in [root, *root.findChildren(QWidget)]:
-        if isinstance(widget, (QLabel, QPushButton, QCheckBox)):
-            widget.setText(translated_text(widget.text(), previous))
-        if isinstance(widget, QLabel):
-            widget.setTextFormat(Qt.TextFormat.PlainText)
-        if isinstance(widget, QGroupBox):
-            widget.setTitle(translated_text(widget.title(), previous))
-        if isinstance(widget, QLineEdit):
-            widget.setPlaceholderText(translated_text(widget.placeholderText(), previous))
-        widget.setToolTip(translated_text(widget.toolTip(), previous))
-        widget.setWindowTitle(translated_text(widget.windowTitle(), previous))
-        if hasattr(widget, 'message'):
-            widget.setText(translated_text(widget.message, previous))

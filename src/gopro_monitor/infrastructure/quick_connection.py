@@ -1,11 +1,11 @@
 """One-button saved WLAN / BLE setup, without storing application secrets."""
-from i18n import tr
+from gopro_monitor.shared.i18n import tr
 import asyncio
 import sys
 import time
 from PyQt6.QtCore import QThread,pyqtSignal
-from camera_api import CameraAPI,CameraError
-from wifi_connect import ensure_wifi,current_ssid
+from gopro_monitor.infrastructure.camera_api import CameraAPI,CameraError
+from gopro_monitor.infrastructure.wifi_connect import ensure_wifi,current_ssid
 
 class QuickConnectionWorker(QThread):
     status=pyqtSignal(str)
@@ -87,7 +87,7 @@ class QuickConnectionWorker(QThread):
             from bleak.backends.winrt.util import uninitialize_sta
             uninitialize_sta()
         from bleak import BleakClient,BleakScanner
-        from ble_setup import BLESession,SERVICE
+        from gopro_monitor.infrastructure.ble_setup import BLESession,SERVICE
         async def wireless(device,name):
             self.status.emit(tr('Hatırlanan kamera hazırlanıyor…'))
             async with BleakClient(device,timeout=20) as client:

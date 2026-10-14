@@ -6,11 +6,11 @@ from unittest.mock import Mock, patch
 import urllib.error
 import numpy as np
 from PyQt6.QtWidgets import QApplication
-from camera_api import CameraAPI, CameraError, validate_address
-from gopro_controller import GoProController
-from ble_setup import PacketAssembler, BLESession, BLECommandError
-from video_stream import VideoStreamThread
-from wifi_connect import profile_xml
+from gopro_monitor.infrastructure.camera_api import CameraAPI, CameraError, validate_address
+from gopro_monitor.infrastructure.qt_controller import GoProController
+from gopro_monitor.infrastructure.ble_setup import PacketAssembler, BLESession, BLECommandError
+from gopro_monitor.infrastructure.video_stream import VideoStreamThread
+from gopro_monitor.infrastructure.wifi_connect import profile_xml
 
 APP = QApplication.instance() or QApplication([])
 
@@ -54,6 +54,17 @@ class APITests(unittest.TestCase):
         for address in ['example.org','http://10.5.5.9/path','https://10.5.5.9','10.5.5.9:bad','http://user:pass@10.5.5.9']:
             with self.subTest(address=address), self.assertRaises(CameraError):
                 validate_address(address)
+
+    def test_malformed_numeric_status_is_rejected_before_ui_signals(self):
+        for field,value in [('10','0'),('10',2),('13',None),('13',-1),('33',[]),('60','invalid'),('97',{})]:
+            status={'10':0,field:value}
+            with self.subTest(field=field,value=value),self.assertRaises(CameraError):
+                self.api(json.dumps({'status':status}).encode()).state()
+
+    def test_malformed_media_items_produce_camera_error(self):
+        for media in [[None],[{'d':'100GOPRO','fs':None}],[{'d':'100GOPRO','fs':[None]}]]:
+            with self.subTest(media=media),self.assertRaises(CameraError):
+                self.api(json.dumps({'media':media}).encode()).media()
 
 class FakeAPI:
     def __init__(self, address=''):
@@ -125,9 +136,9 @@ class ControllerTests(unittest.TestCase):
         self.assertNotIn(('shutter',False),self.controller.api.calls)
 
     def test_connection_failure_can_be_retried(self):
+        self.controller=GoProController(api_factory=Mock(side_effect=[CameraError('unreachable'),FakeAPI()]))
         events = []
         self.controller.command_finished.connect(lambda command,ok:events.append((command,ok)))
-        self.controller._api_factory = Mock(side_effect=[CameraError('unreachable'), FakeAPI()])
         self.controller.start()
         self.controller.connect_camera('10.5.5.9',8554)
         self.controller.connect_camera('10.5.5.9',8554)
@@ -199,7 +210,7 @@ class VideoTests(unittest.TestCase):
                     yield Packet()
             def close(self):
                 self.released = True
-        with patch('video_stream.UDPReader',Reader),patch('video_stream.av.open',side_effect=lambda *a,**kw:Container()):
+        with patch('gopro_monitor.infrastructure.video_stream.UDPReader',Reader),patch('gopro_monitor.infrastructure.video_stream.av.open',side_effect=lambda *a,**kw:Container()):
             for _ in range(2):
                 worker = VideoStreamThread('udp://0.0.0.0:8554')
                 worker.start()
@@ -220,14 +231,14 @@ class VideoTests(unittest.TestCase):
     def test_failed_open_releases_decoder(self):
         source=Mock()
         worker = VideoStreamThread('udp://0.0.0.0:8554')
-        with patch('video_stream.UDPReader',return_value=source),patch('video_stream.av.open',side_effect=ValueError('broken header')):
+        with patch('gopro_monitor.infrastructure.video_stream.UDPReader',return_value=source),patch('gopro_monitor.infrastructure.video_stream.av.open',side_effect=ValueError('broken header')):
             worker.run()
         source.close.assert_called_once()
         self.assertIsNone(worker.take_frame())
 
     def test_udp_reads_preserve_datagram_bytes_and_cancel(self):
         import socket
-        from video_stream import UDPReader
+        from gopro_monitor.infrastructure.video_stream import UDPReader
         cancelled=False
         reader=UDPReader(0,lambda:cancelled,camera_host='127.0.0.1')
         sender=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
@@ -243,7 +254,7 @@ class VideoTests(unittest.TestCase):
 
 class LifecycleTests(unittest.TestCase):
     def test_bluetooth_cancel_before_start_returns_without_scan(self):
-        from ble_setup import BluetoothWorker
+        from gopro_monitor.infrastructure.ble_setup import BluetoothWorker
         worker = BluetoothWorker()
         worker.requestInterruption()
         # QThread resets interruption at start; stop inside an active worker is
@@ -254,7 +265,7 @@ class LifecycleTests(unittest.TestCase):
         asyncio.run(cancelled())
 
     def test_finished_decoder_does_not_accumulate_frame_workers(self):
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         window = MainWindow()
         worker = VideoStreamThread('udp://0.0.0.0:8554',window)
         window.stream_thread = worker
@@ -273,7 +284,7 @@ class LifecycleTests(unittest.TestCase):
         APP.processEvents()
 
     def test_fullscreen_panels_follow_edges_and_preserve_session(self):
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         from PyQt6.QtCore import QPoint
         window=MainWindow(demo=True)
         window.show()

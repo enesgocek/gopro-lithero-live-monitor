@@ -37,7 +37,7 @@ or other controllers can interfere; use one controller at a time.
 
 The normal launchers and desktop shortcut use Python `-I -S`: user site packages,
 `PYTHONPATH`, `sitecustomize` and executable `.pth` startup hooks are not loaded.
-The launcher adds only the interpreter standard library, project directory and
+The launcher adds only the interpreter standard library, project source directory and
 project-local dependency directory. Qt plugin override variables are cleared and
 Windows DLL searching excludes the current working directory and arbitrary PATH
 entries. These reduce module/plugin planting; they are not a malware sandbox.

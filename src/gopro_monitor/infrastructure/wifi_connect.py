@@ -1,5 +1,5 @@
 """Explicit Windows camera Wi-Fi connection; secrets are never printed."""
-from i18n import tr
+from gopro_monitor.shared.i18n import tr
 import os
 from pathlib import Path
 # fixed Windows executable; no shell is used.

@@ -4,10 +4,10 @@ import json
 import sys
 import argparse
 from urllib.parse import urlsplit
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 from PyQt6.QtCore import QCoreApplication,QTimer
-from camera_api import CameraAPI,CameraError,preview_url
-from video_stream import VideoStreamThread
+from gopro_monitor.infrastructure.camera_api import CameraAPI,CameraError,preview_url
+from gopro_monitor.infrastructure.video_stream import VideoStreamThread
 app=QCoreApplication([])
 parser=argparse.ArgumentParser()
 parser.add_argument('--address',default='10.5.5.9')

@@ -8,9 +8,9 @@ from unittest.mock import Mock,patch,AsyncMock
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtTest import QTest
 from PyQt6.QtCore import QCoreApplication,QEvent
-from connection_store import ConnectionStore
-from quick_connection import QuickConnectionWorker
-from wifi_connect import ensure_wifi,current_ssid
+from gopro_monitor.infrastructure.connection_store import ConnectionStore
+from gopro_monitor.infrastructure.quick_connection import QuickConnectionWorker
+from gopro_monitor.infrastructure.wifi_connect import ensure_wifi,current_ssid
 
 APP=QApplication.instance() or QApplication([])
 
@@ -47,24 +47,24 @@ class PreferenceTests(unittest.TestCase):
 
 class SavedWifiTests(unittest.TestCase):
     def test_existing_windows_profile_does_not_need_password_or_xml(self):
-        with patch('wifi_connect.current_ssid',return_value=''),patch('wifi_connect.netsh',return_value=subprocess.CompletedProcess([],0)),patch('wifi_connect.install_profile') as temp:
+        with patch('gopro_monitor.infrastructure.wifi_connect.current_ssid',return_value=''),patch('gopro_monitor.infrastructure.wifi_connect.netsh',return_value=subprocess.CompletedProcess([],0)),patch('gopro_monitor.infrastructure.wifi_connect.install_profile') as temp:
             ensure_wifi('GoPro TestCamera')
             temp.assert_not_called()
-            from wifi_connect import netsh
+            from gopro_monitor.infrastructure.wifi_connect import netsh
             self.assertEqual(netsh.call_args.args,('connect','name=GoPro TestCamera','ssid=GoPro TestCamera'))
 
     def test_current_camera_network_is_preserved_without_reconnect(self):
-        with patch('wifi_connect.current_ssid',return_value='GoPro TestCamera'),patch('wifi_connect.netsh') as commands:
+        with patch('gopro_monitor.infrastructure.wifi_connect.current_ssid',return_value='GoPro TestCamera'),patch('gopro_monitor.infrastructure.wifi_connect.netsh') as commands:
             ensure_wifi('GoPro TestCamera')
             commands.assert_not_called()
 
     def test_current_ssid_parser_does_not_confuse_bssid(self):
         output=b' BSSID : aa:bb:cc:dd:ee:ff\r\n SSID : GoPro TestCamera\r\n Signal : 99%'
-        with patch('wifi_connect.netsh',return_value=subprocess.CompletedProcess([],0,stdout=output)):
+        with patch('gopro_monitor.infrastructure.wifi_connect.netsh',return_value=subprocess.CompletedProcess([],0,stdout=output)):
             self.assertEqual(current_ssid(),'GoPro TestCamera')
 
     def test_missing_profile_requires_ble_secret_without_empty_profile_write(self):
-        with patch('wifi_connect.current_ssid',return_value=''),patch('wifi_connect.netsh',return_value=subprocess.CompletedProcess([],1)),patch('wifi_connect.install_profile') as temp:
+        with patch('gopro_monitor.infrastructure.wifi_connect.current_ssid',return_value=''),patch('gopro_monitor.infrastructure.wifi_connect.netsh',return_value=subprocess.CompletedProcess([],1)),patch('gopro_monitor.infrastructure.wifi_connect.install_profile') as temp:
             with self.assertRaisesRegex(RuntimeError,'Bluetooth'):ensure_wifi('GoPro TestCamera')
             temp.assert_not_called()
 
@@ -85,7 +85,7 @@ class DiscoveryTests(unittest.TestCase):
         session=Mock()
         session.prepare=AsyncMock(return_value=('GoPro TestCamera','unit-test-secret'))
         session.keep_alive=AsyncMock()
-        with patch('bleak.BleakClient',return_value=context) as connect,patch('bleak.BleakScanner.discover') as scan,patch('ble_setup.BLESession',return_value=session),patch('bleak.backends.winrt.util.uninitialize_sta'),patch('quick_connection.ensure_wifi'):
+        with patch('bleak.BleakClient',return_value=context) as connect,patch('bleak.BleakScanner.discover') as scan,patch('gopro_monitor.infrastructure.ble_setup.BLESession',return_value=session),patch('bleak.backends.winrt.util.uninitialize_sta'),patch('gopro_monitor.infrastructure.quick_connection.ensure_wifi'):
             asyncio.run(worker._run())
         scan.assert_not_called()
         connect.assert_called_once_with(profile['device'],timeout=20)
@@ -95,14 +95,14 @@ class DiscoveryTests(unittest.TestCase):
         worker.probe=Mock(return_value={'address':'10.5.5.9','transport':'Wi-Fi'})
         profiles=[]
         worker.profile_ready.connect(profiles.append)
-        with patch('quick_connection.current_ssid',return_value='GoPro TestCamera'),patch('bleak.BleakScanner.discover') as scan:
+        with patch('gopro_monitor.infrastructure.quick_connection.current_ssid',return_value='GoPro TestCamera'),patch('bleak.BleakScanner.discover') as scan:
             asyncio.run(worker._run())
         scan.assert_not_called()
         self.assertEqual(profiles[0]['device'],'02:00:00:00:00:01')
 
 class ConnectionUiTests(unittest.TestCase):
     def test_short_lived_discovery_worker_still_starts_preview_after_connect(self):
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         temp=tempfile.TemporaryDirectory()
         window=MainWindow(demo=True,settings_path=Path(temp.name)/'settings.json')
         window.demo=False

@@ -1,5 +1,5 @@
 """GoPro BLE setup using the documented TLV protocol, without a model-specific SDK."""
-from i18n import tr
+from gopro_monitor.shared.i18n import tr
 import asyncio
 import sys
 from PyQt6.QtCore import QThread, pyqtSignal

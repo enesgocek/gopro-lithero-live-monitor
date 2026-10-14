@@ -3,15 +3,17 @@ import argparse
 import asyncio
 import json
 import sys
-from camera_api import CameraAPI
-from privacy import redact
+from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"src"))
+from gopro_monitor.infrastructure.camera_api import CameraAPI
+from gopro_monitor.shared.privacy import redact
 
 async def scan(show_identifiers=False):
     from bleak import BleakScanner
     if sys.platform=='win32':
         from bleak.backends.winrt.util import uninitialize_sta
         uninitialize_sta()
-    from ble_setup import SERVICE
+    from gopro_monitor.infrastructure.ble_setup import SERVICE
     devices=await BleakScanner.discover(timeout=8,return_adv=True)
     found=[(device,adv) for device,adv in devices.values() if SERVICE in adv.service_uuids or 'gopro' in (device.name or adv.local_name or '').lower()]
     result=[]

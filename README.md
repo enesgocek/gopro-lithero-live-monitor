@@ -166,7 +166,10 @@ check; ambiguous new media is preserved rather than guessed and deleted.
 | Review image | Mouse wheel to zoom; drag to pan; Fit / 100% |
 | Close review and resume live | Back to live, Esc or the window close button |
 
-Panels stay open under your mouse and hide shortly after you return to the image.
+Edge-revealed panels stay open under your mouse and hide shortly after you return to
+the image. Open dropdowns and mouse drags keep their panel available. Panels opened
+with the top buttons stay open until you click the image, toggle the button, or
+press Esc. While a dropdown is open, Esc closes the dropdown first.
 **Mirror** affects only the computer view. **Fill screen** crops display edges; it
 never changes the camera recording.
 
@@ -175,8 +178,8 @@ without reconnecting or disturbing a recording and are remembered locally. A fre
 installation starts in English. You can override the saved choice for a launch:
 
 ```powershell
-.\.venv\Scripts\python.exe main.py --language en
-.\.venv\Scripts\python.exe main.py --language tr
+.\.venv\Scripts\python.exe -I -S launch.py --language en
+.\.venv\Scripts\python.exe -I -S launch.py --language tr
 ```
 
 Other useful options: `--fullscreen`, `--connect`, `--no-auto-connect`, `--demo`.
@@ -243,8 +246,8 @@ for the exact storage, network and cleanup boundaries.
 For redacted, read-only diagnostics:
 
 ```powershell
-.\.venv\Scripts\python.exe diagnose.py
-.\.venv\Scripts\python.exe diagnose.py --scan
+.\.venv\Scripts\python.exe tools/diagnose.py
+.\.venv\Scripts\python.exe tools/diagnose.py --scan
 ```
 
 `--show-identifiers` explicitly reveals Bluetooth identifiers for local troubleshooting;
@@ -254,14 +257,15 @@ private logs or camera footage when reporting an issue.
 ## Development
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-.\.venv\Scripts\python.exe main.py --demo --smoke-test
+.\.venv\Scripts\python.exe -m unittest discover -s tests -t . -v
+.\.venv\Scripts\python.exe -I -S launch.py --demo --smoke-test
 .\.venv\Scripts\python.exe tools/release_check.py
 ```
 
 Tests use synthetic credentials and generated media fixtures. Unit tests do not need
 a camera. Explicit hardware tests in `tests/` need a real camera; quality checks
-create and remove only their own new test media. Hardware screenshots/benchmark
+create and remove only their own new test media. The UI hardware check saves
+screenshots only when explicitly passed `--screenshots`. Hardware screenshots/benchmark
 outputs are private local artifacts and must not be committed. The checked-in
 release allowlist and optional Git hooks guard against accidental publication.
 
@@ -269,6 +273,27 @@ To enable the local commit/push guard: `git config core.hooksPath .githooks`.
 CI runs Windows regression tests, a demo smoke test, publication checks, static
 security analysis and a known-vulnerability dependency audit. Dependency updates
 should regenerate the lock file and rerun both unit and hardware acceptance tests.
+
+## Source layout
+
+```text
+launch.py                     Isolated desktop entry point
+src/gopro_monitor/
+  domain/                     Camera errors, address rules and dependency contracts
+  application/                Camera session and temporary quality-capture workflows
+  infrastructure/             HTTP, Bluetooth, WLAN, settings, media codecs, Qt workers
+  presentation/               Main window, edge panels, review viewer, widget translation
+  shared/                     Framework-free messages and diagnostic redaction
+  __main__.py                 Package entry point
+tests/                       Unit, UI interaction, architecture and hardware checks
+tools/                       Read-only diagnostics, shortcut creation, publication guard
+```
+
+The domain and application layers import no Qt, HTTP adapter or codec library.
+Camera and decoder ports are implemented by infrastructure adapters. The Qt worker
+serializes commands and delegates use cases to the camera session; presentation
+owns widget state and pointer interactions. Architecture tests enforce the import
+boundary. Moving the source does not change saved preferences or desktop shortcuts.
 
 ## License
 

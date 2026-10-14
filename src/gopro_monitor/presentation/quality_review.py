@@ -1,11 +1,12 @@
 """Inspect original camera stills at native resolution, with pan and zoom."""
-from i18n import tr
+from gopro_monitor.presentation.localization import retranslate_widgets
+from gopro_monitor.shared.i18n import tr
 import numpy as np
 from PyQt6.QtCore import Qt,QTimer,pyqtSignal
 from PyQt6.QtGui import QPixmap,QImage,QShortcut,QKeySequence
 from PyQt6.QtWidgets import QDialog,QGraphicsView,QGraphicsScene,QVBoxLayout,QHBoxLayout,QLabel,QPushButton
-from monitor_ui import STYLE
-from i18n import language,retranslate_widgets
+from gopro_monitor.presentation.monitor_ui import STYLE
+from gopro_monitor.shared.i18n import language
 
 class ReviewView(QGraphicsView):
     zoom_changed=pyqtSignal(float)

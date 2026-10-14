@@ -10,9 +10,10 @@ import numpy as np
 from PyQt6.QtCore import Qt,QCoreApplication,QEvent
 from PyQt6.QtTest import QTest
 from PyQt6.QtWidgets import QApplication
-from camera_api import CameraAPI,CameraError
-from quality_capture import QualityCapture
-from quality_review import QualityReview
+from gopro_monitor.infrastructure.camera_api import CameraAPI,CameraError
+from gopro_monitor.application.quality_capture import QualityCapture
+from gopro_monitor.infrastructure.image_decoder import OriginalMediaDecoder
+from gopro_monitor.presentation.quality_review import QualityReview
 
 APP=QApplication.instance() or QApplication([])
 
@@ -61,7 +62,7 @@ class CaptureTests(unittest.TestCase):
         self.jpg=self.root/'source.jpg'
         cv2.imwrite(str(self.jpg),np.full((300,400,3),170,np.uint8))
         self.camera=FakeCamera(self.jpg)
-        self.capture=QualityCapture(self.camera)
+        self.capture=QualityCapture(self.camera,decoder=OriginalMediaDecoder())
         self.capture.pause=Mock()
 
     def test_existing_recording_is_never_stopped(self):
@@ -149,7 +150,7 @@ class PhotoCaptureTests(unittest.TestCase):
         fixture=self.root/'original.jpg'
         cv2.imwrite(str(fixture),np.full((300,400,3),150,np.uint8))
         self.camera=FakeCamera(fixture,photo=True)
-        self.capture=QualityCapture(self.camera)
+        self.capture=QualityCapture(self.camera,decoder=OriginalMediaDecoder())
         self.capture.pause=Mock()
         self.capture.load_preset=Mock(side_effect=lambda preset,**kwargs:self.camera.get('gopro/camera/presets/load',id=preset))
 
@@ -197,10 +198,10 @@ class PhotoCaptureTests(unittest.TestCase):
 
     def test_preset_transition_waits_for_stable_ready_state(self):
         import itertools
-        capture=QualityCapture(self.camera)
+        capture=QualityCapture(self.camera,decoder=OriginalMediaDecoder())
         capture.pause=Mock()
         self.camera.state=Mock(side_effect=[{'97':5,'8':1,'10':0}]+[{'97':65536,'8':0,'10':0}]*10)
-        with patch('quality_capture.time.monotonic',side_effect=itertools.count(0,.1)):
+        with patch('gopro_monitor.application.quality_capture.time.monotonic',side_effect=itertools.count(0,.1)):
             capture.load_preset(65536)
         self.assertGreaterEqual(self.camera.state.call_count,4)
         self.assertEqual(self.camera.preset,65536)
@@ -254,7 +255,7 @@ class DownloadTests(unittest.TestCase):
 
 class ReviewLifetimeTests(unittest.TestCase):
     def window(self):
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         window=MainWindow(demo=True)
         def cleanup():
             window.close()
@@ -296,7 +297,7 @@ class ReviewLifetimeTests(unittest.TestCase):
 
     def test_main_window_does_not_retain_closed_capture(self):
         import weakref
-        from main import MainWindow
+        from gopro_monitor.presentation.main_window import MainWindow
         window=MainWindow(demo=True)
         capture={'kind':'video','width':320,'height':180,'frame':np.zeros((180,320,3),np.uint8)}
         frame_ref=weakref.ref(capture['frame'])

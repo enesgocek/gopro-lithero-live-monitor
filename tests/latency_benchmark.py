@@ -7,13 +7,13 @@ import statistics
 import sys
 import time
 import traceback
-sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'src'))
 import cv2
 import numpy as np
 from PyQt6.QtCore import Qt,QTimer,QRect
 from PyQt6.QtGui import QImage,QPainter,QColor,QFont
 from PyQt6.QtWidgets import QApplication,QWidget
-from camera_api import CameraAPI,preview_url
+from gopro_monitor.infrastructure.camera_api import CameraAPI,preview_url
 
 parser=argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--seconds',type=int,default=24)
@@ -28,7 +28,7 @@ def report_exception(kind,value,tb):
         worker.wait(6000)
     if 'app' in globals():app.quit()
 sys.excepthook=report_exception
-from video_stream import VideoStreamThread
+from gopro_monitor.infrastructure.video_stream import VideoStreamThread
 from urllib.parse import urlsplit
 args.output.parent.mkdir(parents=True,exist_ok=True)
 for stream in (sys.stdout,sys.stderr):
