@@ -11,7 +11,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MANIFEST=ROOT/'release-files.json'
 PRIVATE={'backups','artifacts','captures','.venv','.audit-venv','.release-venv','.git','release','dist','__pycache__'}
 FORBIDDEN={'.connection.json','.connection.tmp','cohn_db.json','RESTORATION.md','.env'}
-SENSITIVE_SUFFIX={'.png','.jpg','.jpeg','.mp4','.mov','.log','.xml','.pem','.key','.p12','.pfx','.zip','.ipynb'}
+SENSITIVE_SUFFIX={'.png','.jpg','.jpeg','.mp4','.mov','.log','.xml','.pem','.key','.p12','.pfx','.zip','.ipynb','.lnk'}
 
 def inspect_text(text,path,known=()):
     findings=[]

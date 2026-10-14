@@ -37,6 +37,7 @@ build/
 *.png
 *.PNG
 *.zip
+*.lnk
 .DS_Store
 Thumbs.db
 .idea/

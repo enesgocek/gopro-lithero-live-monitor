@@ -33,6 +33,26 @@ Only GoPro LIT HERO is accepted. A language change does not reconnect or stop an
 recording. Closing the monitor does not stop an existing recording. Concurrent Quik
 or other controllers can interfere; use one controller at a time.
 
+## Local malware boundary
+
+The normal launchers and desktop shortcut use Python `-I -S`: user site packages,
+`PYTHONPATH`, `sitecustomize` and executable `.pth` startup hooks are not loaded.
+The launcher adds only the interpreter standard library, project directory and
+project-local dependency directory. Qt plugin override variables are cleared and
+Windows DLL searching excludes the current working directory and arbitrary PATH
+entries. These reduce module/plugin planting; they are not a malware sandbox.
+
+Do not run the monitor as administrator. Keep a functioning antivirus, Windows
+updates and firewall enabled. Restrict the local project directory to its owner,
+SYSTEM and Administrators if other local accounts use the computer.
+
+Malware running as the same Windows user can access that user's processes, writable
+files and credentials. Administrator or SYSTEM malware has broader control. A PIN,
+file hash or encrypted preference file cannot reliably isolate this application
+after the OS/account is compromised. Stronger separation requires a separate
+standard Windows account or a separate trusted computer. These protections do not
+claim to make camera footage inaccessible to an already compromised host.
+
 ## Reporting a vulnerability
 
 Use this repository's **Security → Report a vulnerability** when private reporting

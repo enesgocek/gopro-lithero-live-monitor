@@ -96,6 +96,19 @@ other OSes and architectures have not been validated.
 5. Live preview opens when a real frame arrives. If more than one camera is found,
    use **Bluetooth / Wi-Fi setup** to choose your camera explicitly.
 
+### Desktop shortcut
+
+After setup, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\create_shortcut.ps1
+```
+
+This creates **GoPro LitHero Live Monitor** on your desktop. It opens directly in
+fullscreen and connects automatically, without a terminal window or administrator
+rights. The shortcut, `start.cmd` and `monitor.cmd` use the isolated launcher;
+run setup first so all dependencies are available in the project-local `.venv`.
+
 The computer joins the camera's Wi-Fi network. If Wi-Fi is your only internet
 connection, you may lose internet access during monitoring; Ethernet can remain
 connected. Windows may request Bluetooth pairing, location permission for WLAN
