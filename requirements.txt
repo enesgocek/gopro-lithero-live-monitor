@@ -1,5 +1,5 @@
 PyQt6==6.11.0
 opencv-python==5.0.0.93
 numpy==2.5.2
-bleak==0.22.3
+bleak==3.0.2
 av==19.0.1
